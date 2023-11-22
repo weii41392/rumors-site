@@ -80,6 +80,20 @@ describe('text', () => {
         })
       ).toMatchSnapshot();
     });
+
+    it('excludes halfwidth parentheses properly', () => {
+      expect(
+        linkify(
+          'See reference here (http://foo.com/blah_blah_(wikipedia)_(again))'
+        )
+      ).toMatchSnapshot();
+    });
+
+    it('excludes fullwidth parentheses properly', () => {
+      expect(
+        linkify('請參考這裡（http://foo.com/blah_blah_(wikipedia)_(again)）')
+      ).toMatchSnapshot();
+    });
   });
 
   describe('nl2br', () => {

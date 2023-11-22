@@ -1,6 +1,7 @@
 import React, { CSSProperties } from 'react';
 import { gql } from 'graphql-tag';
 import { print } from 'graphql';
+import { tokenize } from 'linkifyjs';
 import { withStyles, WithStyles, createStyles } from '@material-ui/core/styles';
 import { FragmentType, getFragmentData } from '../typegen/fragment-masking';
 import { graphql } from '../typegen';
@@ -111,8 +112,6 @@ function flatternPureStrings(tokens: React.ReactChild[]) {
     : tokens;
 }
 
-const urlRegExp = /(https?:\/\/\S+)/;
-
 /**
  * Wrap <a> around hyperlinks inside a react element or string.
  *
@@ -129,13 +128,13 @@ export function linkify(
   return traverseForStrings(elem, str => {
     if (!str) return str;
 
-    const tokenized = str.split(urlRegExp).map((s, i) =>
-      s.match(urlRegExp) ? (
-        <a key={`link${i}`} href={s} {...props}>
-          {shortenUrl(s, maxLength)}
+    const tokenized = tokenize(str).map((token, i) =>
+      token.isLink ? (
+        <a key={`link${i}`} href={token.v} {...props}>
+          {shortenUrl(token.v, maxLength)}
         </a>
       ) : (
-        s
+        token.toString()
       )
     );
 
